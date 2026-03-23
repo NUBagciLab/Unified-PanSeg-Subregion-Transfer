@@ -1,9 +1,9 @@
-## PancreasSubRegion-Segmentation
+## Whole-Pancreas-Segmentation
 
-> Pancreas subregion segmentation(head, tail and body). 
+> Whole pancreas segmentation.
 
 <p align="center">
-  <img src="figs/workflow.png" alt="Pancreas subregion segmentation overview" width="100%" />
+  <img src="figs/workflow.png" alt="Whole pancreas segmentation overview" width="100%" />
 </p>
 
 
@@ -14,18 +14,19 @@
 
 Pretrained weights (`checkpoint_best.pth`) for this project are available on Google Drive:
 
-- [`PancreasPartsSegmentation` weights folder](https://drive.google.com/drive/folders/1-zfIPTpWc44a1RzEla7pSO52B3pvPJbg?usp=sharing)
+- [`WholePancreasSegmentation` weights folder](https://drive.google.com/drive/folders/1XoCxftZpEfr1fkmquhu2o1DjnyVjw6PN?usp=share_link)
 
 Download `checkpoint_best.pth` from this folder and place it into your chosen `model_folder` (see below).
 
 ---
 ### Installation
 
-1. **Clone** this repository:
+1. **Clone** this repository(you should switch branches):
 
 ```bash
 git clone https://github.com/NUBagciLab/PancreasSubRegion-Segmentation.git
 cd PancreasSubRegion-Segmentation
+git checkout whole-pancreas
 ```
 
 2. **Create and activate** the conda environment:
@@ -56,7 +57,7 @@ model_folder/
   plans.json
 ```
 
-These files should be produced by training with nnU-Net v2 using a configuration that is compatible with the subregion architecture (e.g. where `UNet_subregion` was used as the network). Alternatively, you can use the pretrained `checkpoint_best.pth` from the Google Drive link above and pair it with the appropriate `dataset.json` and `plans.json`.
+These files should be produced by training with nnU-Net v2 using a configuration that is compatible with whole-pancreas segmentation. Alternatively, you can use the pretrained `checkpoint_best.pth` from the Google Drive link above and pair it with the appropriate `dataset.json` and `plans.json`.
 
 ---
 
