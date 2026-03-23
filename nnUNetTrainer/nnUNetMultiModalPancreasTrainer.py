@@ -1,13 +1,13 @@
 from .nnUNetTrainer import nnUNetTrainer
-from nnunetv2.network_architecture.UNet_subregion import get_network
+from network_architecture.UNet_whole_pancreas import get_network
 import torch.nn as nn
 from typing import Union, List, Tuple
-class nnUNetSubregionTrainer(nnUNetTrainer):
+class nnUNetMultiModalPancreasTrainer(nnUNetTrainer):
     def __init__(self, plans: dict, configuration: str, fold: int, dataset_json: dict,
                 device=None):
         super().__init__(plans, configuration, fold, dataset_json, device=device)
         self.num_epochs = 100 
-        self.print_to_log_file(f"Using nnUNetSubregionTrainer, building network architecture directly, \nwithout using the setting from plans.json")
+        self.print_to_log_file(f"Using nnUNetMultiModalPancreasTrainer, building network architecture directly, \nwithout using the setting from plans.json")
     
     def get_tr_and_val_datasets(self):
         dataset_tr, dataset_val = super().get_tr_and_val_datasets()

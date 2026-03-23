@@ -110,7 +110,7 @@ class PlainConvUNet(AbstractDynamicNetworkArchitectures):
 def get_network():
     import pydoc
     input_channels = 1
-    num_classes = 4
+    num_classes = 2
     n_stages = 6
     features_per_stage = [32, 64, 128, 256, 320,320]
     conv_op = "torch.nn.modules.conv.Conv3d"

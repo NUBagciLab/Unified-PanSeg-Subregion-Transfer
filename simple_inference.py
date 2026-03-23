@@ -28,7 +28,7 @@ if _extension_dir not in sys.path:
     sys.path.insert(0, _extension_dir)
 
 # Directly import nnUNetSubregionTrainer (fixed to use nnUNetSubregionTrainer)
-from nnUNetTrainer.nnUNetSubregionTrainer import nnUNetSubregionTrainer
+from nnUNetTrainer.nnUNetMultiModalPancreasTrainer import nnUNetMultiModalPancreasTrainer
 
 # Import fixed export function
 from export_prediction_fixed import export_prediction_from_logits
@@ -127,7 +127,7 @@ class CleanInference:
             print(f"Building network architecture: {configuration_manager.network_arch_class_name}")
         
         # Build network architecture using nnUNetSubregionTrainer
-        network = nnUNetSubregionTrainer.build_network_architecture(
+        network = nnUNetMultiModalPancreasTrainer.build_network_architecture(
             configuration_manager.network_arch_class_name,
             configuration_manager.network_arch_init_kwargs,
             configuration_manager.network_arch_init_kwargs_req_import,
@@ -149,13 +149,13 @@ class CleanInference:
         self.predictor.list_of_parameters = [checkpoint['network_weights']]
         self.predictor.network = network
         self.predictor.dataset_json = dataset_json
-        self.predictor.trainer_name = 'nnUNetSubregionTrainer'  # Fixed trainer name
+        self.predictor.trainer_name = 'nnUNetMultiModalPancreasTrainer'  # Fixed trainer name
         self.predictor.allowed_mirroring_axes = inference_allowed_mirroring_axes
         self.predictor.label_manager = plans_manager.get_label_manager(dataset_json)
         
         if self.verbose:
             print(f"Model loaded successfully!")
-            print(f"  Trainer: nnUNetSubregionTrainer (fixed)")
+            print(f"  Trainer: nnUNetMultiModalPancreasTrainer (fixed)")
             print(f"  Network type: {type(network).__name__}")
             print(f"  Configuration: {configuration_name}")
             print(f"  Input channels: {num_input_channels}")

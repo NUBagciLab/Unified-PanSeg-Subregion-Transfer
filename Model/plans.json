@@ -1,5 +1,5 @@
 {
-    "dataset_name": "Dataset402_PancreasParts",
+    "dataset_name": "Dataset400_MultimodalPancreas",
     "plans_name": "nnUNetPlans",
     "original_median_spacing_after_transp": [
         3.5999999046325684,

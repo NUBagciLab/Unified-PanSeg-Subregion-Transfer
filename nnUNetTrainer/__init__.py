@@ -2,7 +2,7 @@
 Trainer module.
 """
 
-from .nnUNetSubregionTrainer import nnUNetSubregionTrainer
+from .nnUNetMultiModalPancreasTrainer import nnUNetMultiModalPancreasTrainer
 
-__all__ = ['nnUNetSubregionTrainer']
+__all__ = ['nnUNetMultiModalPancreasTrainer']
 
