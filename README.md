@@ -33,7 +33,7 @@ git checkout whole-pancreas
 
 ```bash
 conda env create -f environment.yml
-conda activate pancreas_sub_seg  # or rename/change as you prefer
+conda activate pancreas_seg_toolkit  # or rename/change as you prefer
 ```
 
 3. **Install in editable mode** (recommended):
