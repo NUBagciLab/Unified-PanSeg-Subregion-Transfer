@@ -1,4 +1,4 @@
-name: pancreas_sub_seg
+name: pancreas_seg_toolkit
 channels:
   - defaults
 dependencies:
