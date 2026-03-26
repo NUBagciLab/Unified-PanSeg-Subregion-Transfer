@@ -43,6 +43,12 @@ pip install -e .
 
 Make sure that your CUDA drivers match the versions in `environment.yml` if you want GPU inference.
 
+4.**Looking for whole pancreas segmentation?**
+Check branch whole-pancreas
+```bash
+git checkout whole-pancreas
+```
+
 ---
 
 ### Model folder layout
