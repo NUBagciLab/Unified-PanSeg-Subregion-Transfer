@@ -24,7 +24,7 @@ Download `checkpoint_best.pth` from this folder and place it into your chosen `m
 1. **Clone** this repository(you should switch branches):
 
 ```bash
-git clone https://github.com/NUBagciLab/PancreasSubRegion-Segmentation.git
+git clone https://github.com/NUBagciLab/PancreasSegToolkit.git
 cd PancreasSubRegion-Segmentation
 git checkout whole-pancreas
 ```
