@@ -41,6 +41,10 @@ conda activate pancreas_sub_seg  # or rename/change as you prefer
 ```bash
 pip install -e .
 ```
+4. **Looking for pancreas parts segmentation?**
+```bash
+git checkout main
+```
 
 Make sure that your CUDA drivers match the versions in `environment.yml` if you want GPU inference.
 
