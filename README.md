@@ -32,14 +32,14 @@ git checkout whole-pancreas
 2. **Create and activate** the conda environment:
 
 ```bash
-conda env create -f environment.yml
+conda conda create --name pancreas_seg_toolkit python=3.10
 conda activate pancreas_seg_toolkit  # or rename/change as you prefer
 ```
 
 3. **Install in editable mode** (recommended):
 
 ```bash
-pip install -e .
+pip install -r requirements.txt
 ```
 4. **Looking for pancreas parts segmentation?**
 ```bash
