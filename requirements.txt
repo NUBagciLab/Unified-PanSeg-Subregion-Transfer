@@ -53,6 +53,7 @@ nest_asyncio
 networkx==3.4.2
 ninja==1.11.1.4
 -e git+https://github.com/MIC-DKFZ/nnUNet.git@8c4184d46b60059ff7dc8f74cd535e13554bdeca#egg=nnunetv2
+# use wipe when install nnunet
 numexpr==2.10.2
 numpy==1.26.4
 nvidia-cublas-cu12==12.4.5.8
