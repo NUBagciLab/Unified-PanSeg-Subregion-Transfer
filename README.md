@@ -32,7 +32,7 @@ git checkout whole-pancreas
 2. **Create and activate** the conda environment:
 
 ```bash
-conda conda create --name pancreas_seg_toolkit python=3.10
+conda create --name pancreas_seg_toolkit python=3.10
 conda activate pancreas_seg_toolkit  # or rename/change as you prefer
 ```
 
