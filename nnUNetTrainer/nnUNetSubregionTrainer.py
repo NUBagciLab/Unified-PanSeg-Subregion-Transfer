@@ -1,5 +1,5 @@
 from .nnUNetTrainer import nnUNetTrainer
-from nnunetv2.network_architecture.UNet_subregion import get_network
+from network_architecture.UNet_subregion import get_network
 import torch.nn as nn
 from typing import Union, List, Tuple
 class nnUNetSubregionTrainer(nnUNetTrainer):

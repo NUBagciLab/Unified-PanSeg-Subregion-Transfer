@@ -25,20 +25,20 @@ Download `checkpoint_best.pth` from this folder and place it into your chosen `m
 
 ```bash
 git clone https://github.com/NUBagciLab/PancreasSegToolkit.git
-cd PancreasSubRegion-Segmentation
+cd PancreasSegToolkit
 ```
 
 2. **Create and activate** the conda environment:
 
 ```bash
-conda env create -f environment.yml
+conda conda create --name pancreas_seg_toolkit python=3.10
 conda activate pancreas_seg_toolkit  # or rename/change as you prefer
 ```
 
 3. **Install in editable mode** (recommended):
 
 ```bash
-pip install -e .
+pip install -r requirements.txt
 ```
 
 Make sure that your CUDA drivers match the versions in `environment.yml` if you want GPU inference.

@@ -2,7 +2,6 @@
 Network architecture module.
 """
 
-from .PaNSegNet import PaNSegNet
 
-__all__ = ['PaNSegNet']
+__all__ = ['UNet_subregion']
 
