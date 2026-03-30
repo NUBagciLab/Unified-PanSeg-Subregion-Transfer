@@ -255,7 +255,7 @@ class CleanInference:
             print(f"  Input data_tensor shape: {data_tensor.shape}")
             print(f"  use_mirroring: {self.predictor.use_mirroring}")
             print(f"  allowed_mirroring_axes: {self.predictor.allowed_mirroring_axes}")
-        print("data_tensor.shape", data_tensor.shape)
+        # print("data_tensor.shape", data_tensor.shape)
         with torch.no_grad():
             predicted_logits = self.predictor.predict_logits_from_preprocessed_data(data_tensor).cpu()
 
