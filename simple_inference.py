@@ -28,10 +28,11 @@ if _extension_dir not in sys.path:
     sys.path.insert(0, _extension_dir)
 
 # Directly import nnUNetSubregionTrainer (fixed to use nnUNetSubregionTrainer)
-from nnUNetTrainer.nnUNetSubregionTrainer import nnUNetSubregionTrainer
+from nnUNetTrainer.nnUNetMultiModalPancreasTrainer import nnUNetMultiModalPancreasTrainer
 
 # Import fixed export function
 from export_prediction_fixed import export_prediction_from_logits
+from nnunetv2.inference.export_prediction import convert_predicted_logits_to_segmentation_with_correct_shape
 
 
 class CleanInference:
@@ -127,7 +128,7 @@ class CleanInference:
             print(f"Building network architecture: {configuration_manager.network_arch_class_name}")
         
         # Build network architecture using nnUNetSubregionTrainer
-        network = nnUNetSubregionTrainer.build_network_architecture(
+        network = nnUNetMultiModalPancreasTrainer.build_network_architecture(
             configuration_manager.network_arch_class_name,
             configuration_manager.network_arch_init_kwargs,
             configuration_manager.network_arch_init_kwargs_req_import,
@@ -149,13 +150,13 @@ class CleanInference:
         self.predictor.list_of_parameters = [checkpoint['network_weights']]
         self.predictor.network = network
         self.predictor.dataset_json = dataset_json
-        self.predictor.trainer_name = 'nnUNetSubregionTrainer'  # Fixed trainer name
+        self.predictor.trainer_name = 'nnUNetMultiModalPancreasTrainer'  # Fixed trainer name
         self.predictor.allowed_mirroring_axes = inference_allowed_mirroring_axes
         self.predictor.label_manager = plans_manager.get_label_manager(dataset_json)
         
         if self.verbose:
             print(f"Model loaded successfully!")
-            print(f"  Trainer: nnUNetSubregionTrainer (fixed)")
+            print(f"  Trainer: nnUNetMultiModalPancreasTrainer (fixed)")
             print(f"  Network type: {type(network).__name__}")
             print(f"  Configuration: {configuration_name}")
             print(f"  Input channels: {num_input_channels}")
@@ -255,7 +256,7 @@ class CleanInference:
             print(f"  Input data_tensor shape: {data_tensor.shape}")
             print(f"  use_mirroring: {self.predictor.use_mirroring}")
             print(f"  allowed_mirroring_axes: {self.predictor.allowed_mirroring_axes}")
-        # print("data_tensor.shape", data_tensor.shape)
+        print("data_tensor.shape", data_tensor.shape)
         with torch.no_grad():
             predicted_logits = self.predictor.predict_logits_from_preprocessed_data(data_tensor).cpu()
 
@@ -302,6 +303,43 @@ class CleanInference:
             print(f"  Output file (truncated): {output_file_truncated}")
             print(f"  Will add file ending: {file_ending}")
         
+        # The actual output file will be output_file_truncated + file_ending
+        actual_output_file = output_file_truncated + file_ending
+        affine_reoriented = data_properties['nibabel_stuff']['reoriented_affine']
+        affine_original = data_properties['nibabel_stuff']['original_affine']
+        original_orientation = io_orientation(affine_original)
+        reoriented_orientation = io_orientation(affine_reoriented)
+        from_re_or_to_original = ornt_transform(reoriented_orientation,original_orientation)
+
+        if save_probabilities:
+            if self.verbose:
+                print("Saving probability map NIfTI (after softmax/sigmoid, before final segmentation).")
+            label_manager = self.predictor.plans_manager.get_label_manager(self.predictor.dataset_json)
+            _, probabilities_final = convert_predicted_logits_to_segmentation_with_correct_shape(
+                predicted_logits,
+                self.predictor.plans_manager,
+                self.predictor.configuration_manager,
+                label_manager,
+                data_properties,
+                return_probabilities=True,
+            )
+            # nnU-Net probabilities are (C, Z, Y, X).
+            # For binary segmentation we save only foreground probability (channel 1)
+            # to avoid confusion with background probability (channel 0).
+            if probabilities_final.shape[0] == 2:
+                probabilities_nifti = probabilities_final[1].transpose(2, 1, 0).astype(np.float32, copy=False)
+            else:
+                # For multi-class tasks we keep all channels as 4D NIfTI: (X, Y, Z, C)
+                probabilities_nifti = probabilities_final.transpose(3, 2, 1, 0).astype(np.float32, copy=False)
+
+            prob_nib = nib.Nifti1Image(probabilities_nifti, affine_reoriented)
+            prob_nib = prob_nib.as_reoriented(from_re_or_to_original)
+            # Keep pixdim/qform/sform consistent with the reoriented affine.
+            prob_nib.set_qform(prob_nib.affine, code=1)
+            prob_nib.set_sform(prob_nib.affine, code=1)
+            nib.save(prob_nib, actual_output_file)
+            return
+
         # export_prediction_from_logits will use the image_reader_writer_class from plans
         # which should be NibabelIOWithReorient, and it will use data_properties['nibabel_stuff']
         # to restore the original orientation
@@ -343,25 +381,17 @@ class CleanInference:
                 # Compare first/last slices to check if transpose is correct
                 print(f"  Before transpose - first slice sum: {segmentation_final_before_transpose[0].sum()}")
                 print(f"  After transpose - first slice sum: {segmentation_final[:,:,0].sum()}")
-
-        # The actual output file will be output_file_truncated + file_ending
-        actual_output_file = output_file_truncated + file_ending
-        affine_reoriented = data_properties['nibabel_stuff']['reoriented_affine']
-        affine_original = data_properties['nibabel_stuff']['original_affine']
         
         if self.verbose:
             print(f"\n=== Orientation info ===")
             print(f"affine_reoriented shape: {affine_reoriented.shape}")
             print(f"affine_original shape: {affine_original.shape}")
         
-        original_orientation = io_orientation(affine_original)
-        reoriented_orientation = io_orientation(affine_reoriented)
-        from_re_or_to_original = ornt_transform(reoriented_orientation,original_orientation)
         seg_final_nib = nib.Nifti1Image(segmentation_final, affine_reoriented)
         seg_final_nib = seg_final_nib.as_reoriented(from_re_or_to_original)
-
-        seg_final_nib.header.set_zooms(properties['spacing'])
-
+        # Keep pixdim/qform/sform consistent with the reoriented affine.
+        seg_final_nib.set_qform(seg_final_nib.affine, code=1)
+        seg_final_nib.set_sform(seg_final_nib.affine, code=1)
         nib.save(seg_final_nib, actual_output_file)
 
         # seg_nib = nib.Nifti1Image(segmentation_final, properties['affine'])

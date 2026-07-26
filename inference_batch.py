@@ -48,6 +48,7 @@ def run_batch_inference(
     model_folder: str,
     gpu_id: int = 0,
     verbose: bool = True,
+    keep_largest_cc_per_class: bool = True,
 ) -> None:
     """
     Segment each .nii / .nii.gz in ``input_dir`` and save under ``output_dir`` with the same basename.
@@ -58,6 +59,8 @@ def run_batch_inference(
         model_folder: nnUNet model directory (checkpoint_best.pth, dataset.json, plans.json)
         gpu_id: CUDA device index
         verbose: Print per-file progress
+        keep_largest_cc_per_class: Per class, keep only the largest 3D connected
+            component on the numpy label map before saving.
     """
     if not os.path.isdir(input_dir):
         raise NotADirectoryError(f"Not a directory: {input_dir}")
@@ -73,6 +76,7 @@ def run_batch_inference(
         model_folder=model_folder,
         device=device,
         verbose=verbose,
+        keep_largest_cc_per_class=keep_largest_cc_per_class,
     )
 
     n = len(files)
@@ -120,11 +124,16 @@ Example:
         "-d",
         "--device",
         type=int,
-        default=0,
+        default=4,
         metavar="GPU_ID",
         help="CUDA GPU index (e.g. 0 for the first GPU)",
     )
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+    parser.add_argument(
+        "--no-largest-cc",
+        action="store_true",
+        help="Disable per-class largest connected component post-processing",
+    )
 
     args = parser.parse_args()
 
@@ -137,6 +146,7 @@ Example:
         model_folder=args.model,
         gpu_id=args.device,
         verbose=args.verbose,
+        keep_largest_cc_per_class=not args.no_largest_cc,
     )
 
 
