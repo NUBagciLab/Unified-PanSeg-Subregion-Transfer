@@ -32,6 +32,7 @@ from nnUNetTrainer.nnUNetMultiModalPancreasTrainer import nnUNetMultiModalPancre
 
 # Import fixed export function
 from export_prediction_fixed import export_prediction_from_logits
+from nnunetv2.inference.export_prediction import convert_predicted_logits_to_segmentation_with_correct_shape
 
 
 class CleanInference:
@@ -302,6 +303,43 @@ class CleanInference:
             print(f"  Output file (truncated): {output_file_truncated}")
             print(f"  Will add file ending: {file_ending}")
         
+        # The actual output file will be output_file_truncated + file_ending
+        actual_output_file = output_file_truncated + file_ending
+        affine_reoriented = data_properties['nibabel_stuff']['reoriented_affine']
+        affine_original = data_properties['nibabel_stuff']['original_affine']
+        original_orientation = io_orientation(affine_original)
+        reoriented_orientation = io_orientation(affine_reoriented)
+        from_re_or_to_original = ornt_transform(reoriented_orientation,original_orientation)
+
+        if save_probabilities:
+            if self.verbose:
+                print("Saving probability map NIfTI (after softmax/sigmoid, before final segmentation).")
+            label_manager = self.predictor.plans_manager.get_label_manager(self.predictor.dataset_json)
+            _, probabilities_final = convert_predicted_logits_to_segmentation_with_correct_shape(
+                predicted_logits,
+                self.predictor.plans_manager,
+                self.predictor.configuration_manager,
+                label_manager,
+                data_properties,
+                return_probabilities=True,
+            )
+            # nnU-Net probabilities are (C, Z, Y, X).
+            # For binary segmentation we save only foreground probability (channel 1)
+            # to avoid confusion with background probability (channel 0).
+            if probabilities_final.shape[0] == 2:
+                probabilities_nifti = probabilities_final[1].transpose(2, 1, 0).astype(np.float32, copy=False)
+            else:
+                # For multi-class tasks we keep all channels as 4D NIfTI: (X, Y, Z, C)
+                probabilities_nifti = probabilities_final.transpose(3, 2, 1, 0).astype(np.float32, copy=False)
+
+            prob_nib = nib.Nifti1Image(probabilities_nifti, affine_reoriented)
+            prob_nib = prob_nib.as_reoriented(from_re_or_to_original)
+            # Keep pixdim/qform/sform consistent with the reoriented affine.
+            prob_nib.set_qform(prob_nib.affine, code=1)
+            prob_nib.set_sform(prob_nib.affine, code=1)
+            nib.save(prob_nib, actual_output_file)
+            return
+
         # export_prediction_from_logits will use the image_reader_writer_class from plans
         # which should be NibabelIOWithReorient, and it will use data_properties['nibabel_stuff']
         # to restore the original orientation
@@ -343,25 +381,17 @@ class CleanInference:
                 # Compare first/last slices to check if transpose is correct
                 print(f"  Before transpose - first slice sum: {segmentation_final_before_transpose[0].sum()}")
                 print(f"  After transpose - first slice sum: {segmentation_final[:,:,0].sum()}")
-
-        # The actual output file will be output_file_truncated + file_ending
-        actual_output_file = output_file_truncated + file_ending
-        affine_reoriented = data_properties['nibabel_stuff']['reoriented_affine']
-        affine_original = data_properties['nibabel_stuff']['original_affine']
         
         if self.verbose:
             print(f"\n=== Orientation info ===")
             print(f"affine_reoriented shape: {affine_reoriented.shape}")
             print(f"affine_original shape: {affine_original.shape}")
         
-        original_orientation = io_orientation(affine_original)
-        reoriented_orientation = io_orientation(affine_reoriented)
-        from_re_or_to_original = ornt_transform(reoriented_orientation,original_orientation)
         seg_final_nib = nib.Nifti1Image(segmentation_final, affine_reoriented)
         seg_final_nib = seg_final_nib.as_reoriented(from_re_or_to_original)
-
-        seg_final_nib.header.set_zooms(properties['spacing'])
-
+        # Keep pixdim/qform/sform consistent with the reoriented affine.
+        seg_final_nib.set_qform(seg_final_nib.affine, code=1)
+        seg_final_nib.set_sform(seg_final_nib.affine, code=1)
         nib.save(seg_final_nib, actual_output_file)
 
         # seg_nib = nib.Nifti1Image(segmentation_final, properties['affine'])
