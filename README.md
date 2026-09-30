@@ -1,15 +1,26 @@
-## PancreasSubRegion-Segmentation
+# PancreasSubRegion-Segmentation
 
-> Pancreas subregion segmentation(head, tail and body). 
+> Pancreas subregion segmentation (head, body, and tail).
 
 <p align="center">
   <img src="figs/workflow.png" alt="Pancreas subregion segmentation overview" width="100%" />
 </p>
 
+---
+
+### Paper
+
+📄 **Our paper has been accepted!**
+
+For more details about the method, experiments, and results, please refer to our paper:
+
+- [**Read the paper on arXiv**](https://arxiv.org/abs/2609.13043)
+- [**Download PDF**](https://arxiv.org/pdf/2609.13043)
 
 ---
 
 ### Pretrained weights
+
 > Why not solve this problem with one model? Try this on three modalities --> T1W, T2W, and CT.
 
 Pretrained weights (`checkpoint_best.pth`) for this project are available on Google Drive:
@@ -19,6 +30,7 @@ Pretrained weights (`checkpoint_best.pth`) for this project are available on Goo
 Download `checkpoint_best.pth` from this folder and place it into your chosen `model_folder` (see below).
 
 ---
+
 ### Installation
 
 1. **Clone** this repository:
@@ -35,16 +47,18 @@ conda create --name pancreas_seg_toolkit python=3.10
 conda activate pancreas_seg_toolkit  # or rename/change as you prefer
 ```
 
-3. **Install in editable mode** (recommended):
+3. **Install dependencies**:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Make sure that your CUDA drivers match the versions in `environment.yml` if you want GPU inference.
+Make sure that your CUDA drivers match the required versions if you want GPU inference.
 
-4.**Looking for whole pancreas segmentation?**
-Check branch whole-pancreas
+4. **Looking for whole-pancreas segmentation?**
+
+Check the `whole-pancreas` branch:
+
 ```bash
 git checkout whole-pancreas
 ```
@@ -62,7 +76,9 @@ model_folder/
   plans.json
 ```
 
-These files should be produced by training with nnU-Net v2 using a configuration that is compatible with the subregion architecture (e.g. where `UNet_subregion` was used as the network). Alternatively, you can use the pretrained `checkpoint_best.pth` from the Google Drive link above and pair it with the appropriate `dataset.json` and `plans.json`.
+These files should be produced by training with nnU-Net v2 using a configuration that is compatible with the subregion architecture (e.g., where `UNet_subregion` was used as the network).
+
+Alternatively, you can use the pretrained `checkpoint_best.pth` from the Google Drive link above and pair it with the appropriate `dataset.json` and `plans.json`.
 
 ---
 
@@ -89,14 +105,14 @@ python simple_inference.py \
   Internally, the script strips the extension, appends the dataset-specific `file_ending` (from `dataset.json`, defaulting to `.nii.gz`), and writes using the correct orientation and spacing.
 
 - `-m, --model`  
-  Path to the **model folder** containing `checkpoint_best.pth`, `dataset.json`, `plans.json`. Default: `Model`.
+  Path to the **model folder** containing `checkpoint_best.pth`, `dataset.json`, and `plans.json`. Default: `Model`.
 
 - `-d, --device`  
   Device: `cpu`, `cuda`, or `mps`.  
   When `cuda` is used, most operations are kept on the GPU for speed.
 
 - `-v, --verbose`  
-  If set, prints detailed logs(Optional, if you are just running inference, ignore):
+  If set, prints detailed logs (optional; if you are only running inference, you can ignore this):
   - Image shape and spacing.
   - Whether `nibabel_stuff` / `sitk_stuff` is present in properties.
   - Shapes at each preprocessing / prediction step.
@@ -140,12 +156,11 @@ engine.predict_single_file(
 
 <p align="center">
   <img src="figs/segmentation.png" alt="Example axial slice with prediction overlay" width="100%" />
-
 </p>
+
 ---
 
 ### Contact
 
-This code is primarily intended for internal research use.  
+This code is primarily intended for research use.  
 Adapt paths, trainer configuration, and dataset filtering logic as needed for your own setup.
-
