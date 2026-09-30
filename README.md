@@ -36,8 +36,8 @@ Download `checkpoint_best.pth` from this folder and place it into your chosen `m
 1. **Clone** this repository:
 
 ```bash
-git clone https://github.com/NUBagciLab/PancreasSegToolkit.git
-cd PancreasSegToolkit
+git clone https://github.com/NUBagciLab/Unified-PanSeg-Subregion-Transfer.git
+cd Unified-PanSeg-Subregion-Transfer
 ```
 
 2. **Create and activate** the conda environment:
@@ -164,3 +164,8 @@ engine.predict_single_file(
 
 This code is primarily intended for research use.  
 Adapt paths, trainer configuration, and dataset filtering logic as needed for your own setup.
+
+
+### Project website
+
+The dataset and project page is available in [`docs/index.html`](docs/index.html). See [`WEBSITE_SETUP.md`](WEBSITE_SETUP.md) for preview and GitHub Pages publishing instructions. The dataset release is currently in preparation.
