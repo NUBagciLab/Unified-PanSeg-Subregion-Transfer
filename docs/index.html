@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unified PanSeg · Pancreas Subregion Segmentation</title>
+<meta name="description" content="Unified CT and MRI pancreas segmentation, label-efficient subregion transfer, and pancreatic head, body, and tail dataset resources.">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><a class="brand" href="#">Unified <strong>PanSeg</strong><span class="brand-dot"></span></a><nav aria-label="Main navigation"><a href="#dataset">Dataset</a><a href="#method">Method</a><a href="#results">Results</a><a href="#resources">Resources</a></nav></header>
+<main id="main">
+<section class="hero wrap">
+<p class="eyebrow">PANCREAS IMAGING · DATA &amp; METHODS</p>
+<h1>Unified CT and MRI<br>Pancreas Segmentation</h1>
+<p class="subtitle">for Label-Efficient Cross-Modality Subregion Transfer</p>
+<p class="authors">Ziliang Hong · Hongyi Pan · Halil Ertugrul Aktas · Andrea Bejar · Elif Keles<br>Frank H. Miller · Michael B. Wallace · Rajesh N. Keswani · Gorkem Durak · Ulas Bagci</p>
+<p class="lab">NUBagciLab · Northwestern University</p>
+<div class="actions"><a class="button dark" href="https://arxiv.org/abs/2609.13043">Read paper ↗</a><a class="button" href="https://github.com/NUBagciLab/Unified-PanSeg-Subregion-Transfer">Code ↗</a><a class="button" href="#resources">Pretrained weights ↓</a><a class="button accent" href="#dataset">Explore dataset ↓</a></div>
+<p class="release-note"><span class="status-dot"></span> Dataset release in preparation</p>
+<figure class="hero-figure"><a href="assets/segmentation.png" aria-label="Open full-size segmentation examples"><img src="assets/segmentation.png" alt="Reference, baseline, and proposed pancreas subregion segmentations shown across three representative scans." width="1446" height="1332"></a><figcaption>One anatomical representation. Three pancreatic subregions.<br><span>Reference annotations, baseline predictions, and our results. Click the image to view at full resolution.</span></figcaption></figure>
+</section>
+<section class="band"><div class="wrap narrow"><p class="eyebrow">THE IDEA</p><h2>Shared anatomy across modalities.</h2><p class="lead">Learn a unified pancreas representation from CT and MRI, then transfer it to the pancreatic head, body, and tail with limited MRI annotations.</p><p>The framework combines whole-pancreas segmentation with domain-adversarial learning. A shared 3D nnU-Net encoder learns anatomical features across modalities; the learned encoder then supports downstream subregion segmentation, including transfer to CT without CT subregion training annotations.</p></div></section>
+<section id="dataset" class="wrap section"><div class="section-heading"><p class="eyebrow">01 / DATASET</p><h2>Pancreas subregion resources</h2><p>Head, body, and tail segmentation for studying pancreatic anatomy.</p></div>
+<div class="dataset-grid"><article class="panel"><span class="tag">RELEASE IN PREPARATION</span><h3>A dataset built around subregions</h3><p>This project page will host the pancreas subregion dataset release and its documentation. The public release size, modality breakdown, train/test splits, and access terms will be announced with the dataset.</p><p class="muted">The model supports T1W MRI, T2W MRI, and CT inference. Model support does not imply that all three modalities will be included in the dataset release.</p><a class="text-link" href="#resources">Check available resources →</a></article>
+<article class="panel"><h3>Segmentation labels</h3><p>Label IDs in the repository’s current model configuration.</p><table><thead><tr><th scope="col">Value</th><th scope="col">Structure</th></tr></thead><tbody><tr><td>0</td><td>Background</td></tr><tr><td>1</td><td>Pancreas head</td></tr><tr><td>2</td><td>Pancreas body</td></tr><tr><td>3</td><td>Pancreas tail</td></tr></tbody></table><p class="small muted">Image and segmentation format: NIfTI (.nii.gz). The annotation protocol and final release specification will accompany the dataset.</p></article></div>
+</section>
+<section id="method" class="band"><div class="wrap section"><div class="section-heading"><p class="eyebrow">02 / METHOD</p><h2>From whole pancreas to its parts</h2><p>Cross-modality representation learning followed by subregion transfer.</p></div><figure class="paper-figure"><a href="assets/workflow.png" aria-label="Open full-size framework overview"><img src="assets/workflow.png" alt="Shared CT and MRI encoder-decoder, gradient reversal domain discriminator, and downstream transfer to pancreatic head, body, and tail segmentation." loading="lazy" width="1834" height="990"></a></figure><div class="steps"><article><span>01</span><h3>Learn anatomy</h3><p>Train a shared segmentation backbone on heterogeneous CT and MRI scans.</p></article><article><span>02</span><h3>Align modalities</h3><p>Use a domain discriminator and gradient reversal to encourage aligned features.</p></article><article><span>03</span><h3>Transfer to subregions</h3><p>Adapt the learned encoder with limited MRI head, body, and tail annotations.</p></article></div></div></section>
+<section id="results" class="wrap section"><div class="section-heading"><p class="eyebrow">03 / RESULTS</p><h2>Cross-modality segmentation</h2><p>Summary results reported in the <a href="https://arxiv.org/abs/2609.13043">paper</a>. Dice scores are expressed as percentages.</p></div><div class="metrics"><article><strong>87.31<span>%</span></strong><p>Whole pancreas</p><small>In-distribution test set</small></article><article><strong>80.53<span>%</span></strong><p>MRI subregions</p><small>Downstream head / body / tail</small></article><article><strong>83.05<span>%</span></strong><p>CT subregions</p><small>No CT subregion training annotations</small></article></div><p class="result-note">Whole-pancreas Dice on external datasets: <strong>84.20–88.09%</strong>. The study uses <strong>4,604 CT and MRI scans</strong> for unified representation learning; this is the study cohort size, not an announced public subregion release size.</p></section>
+<section id="resources" class="band"><div class="wrap section"><div class="section-heading"><p class="eyebrow">04 / RESOURCES</p><h2>Use the project</h2><p>Read the study, run inference, and follow the dataset release.</p></div><div class="resource-grid"><article class="panel"><span class="resource-number">01</span><h3>Dataset</h3><p>Public download and access terms will be added when the dataset is ready.</p><span class="pending">In preparation</span></article><article class="panel"><span class="resource-number">02</span><h3>Pretrained weights</h3><p>Download checkpoint_best.pth and use the matching model configuration.</p><a class="text-link" href="https://drive.google.com/drive/folders/1-zfIPTpWc44a1RzEla7pSO52B3pvPJbg?usp=sharing">Open weights folder ↗</a></article><article class="panel"><span class="resource-number">03</span><h3>Code &amp; inference</h3><p>Installation, model setup, and Python or command-line inference.</p><a class="text-link" href="https://github.com/NUBagciLab/Unified-PanSeg-Subregion-Transfer#installation">Get started on GitHub ↗</a></article></div></div></section>
+<section id="citation" class="wrap section narrow"><div class="section-heading"><p class="eyebrow">05 / CITATION</p><h2>Cite this work</h2><p>If this work supports your research, please cite the paper.</p></div><div class="citation-toolbar"><span>BibTeX · arXiv preprint</span><button id="copy" type="button">Copy citation</button></div><pre><code id="bibtex">@article{hong2026unified,
+  title={Unified CT and MRI Pancreas Segmentation for
+         Label-Efficient Cross-Modality Subregion Transfer},
+  author={Hong, Ziliang and Pan, Hongyi and Aktas, Halil Ertugrul
+          and Bejar, Andrea and Keles, Elif and Miller, Frank H.
+          and Wallace, Michael B. and Keswani, Rajesh N.
+          and Durak, Gorkem and Bagci, Ulas},
+  journal={arXiv preprint arXiv:2609.13043},
+  year={2026},
+  doi={10.48550/arXiv.2609.13043},
+  url={https://arxiv.org/abs/2609.13043}
+}</code></pre><p id="copy-status" class="small" aria-live="polite"></p></section>
+</main>
+<footer><div class="wrap"><a class="brand" href="#">Unified <strong>PanSeg</strong></a><p>Pancreas anatomy · Cross-modality learning · Subregion transfer</p><p class="small">Layout inspired by <a href="https://nubagcilab.github.io/BronchoAccess/">BronchoAccess</a> and the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>. Independently implemented for this project.</p></div></footer>
+</body></html>
