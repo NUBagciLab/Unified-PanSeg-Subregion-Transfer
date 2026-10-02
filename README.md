@@ -2,6 +2,8 @@
 
 > Pancreas subregion segmentation (head, body, and tail).
 
+[**Project Website**](https://nubagcilab.github.io/Unified-PanSeg-Subregion-Transfer/) · [**Dataset**](https://huggingface.co/datasets/Ziliang47/Cyst-X-Pancreas-Subregions)
+
 <p align="center">
   <img src="figs/workflow.png" alt="Pancreas subregion segmentation overview" width="100%" />
 </p>
@@ -168,4 +170,9 @@ Adapt paths, trainer configuration, and dataset filtering logic as needed for yo
 
 ### Project website
 
-The dataset and project page is available in [`docs/index.html`](docs/index.html). See [`WEBSITE_SETUP.md`](WEBSITE_SETUP.md) for preview and GitHub Pages publishing instructions. The dataset release is currently in preparation.
+Visit the [project website](https://nubagcilab.github.io/Unified-PanSeg-Subregion-Transfer/) for the dataset overview, results, and citations.
+
+- [Subregion masks on Hugging Face](https://huggingface.co/datasets/Ziliang47/Cyst-X-Pancreas-Subregions)
+- [Original MRI images on Cyst-X](https://huggingface.co/datasets/phy710/Cyst-X)
+
+Subregion masks are available for a subset of Cyst-X scans.
